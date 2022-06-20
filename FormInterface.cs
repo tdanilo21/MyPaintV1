@@ -48,19 +48,19 @@ namespace MyPaint
         public Action<object, IKeyEventProps> KeyUpCallback { set { keyUp_callback = value; KeyUp += new KeyEventHandler(KeyUpEventHandler); } }
     }
 
-    class MyGraphics : IGraphcis<MyGraphics>
+    class MyGraphics : IGraphics<MyGraphics>
     {
         Graphics g;
         public MyGraphics() { }
         public MyGraphics(Graphics g) { this.g = g; }
-        MyGraphics IGraphcis<MyGraphics>.GetFromImage(Bitmap img) { return new MyGraphics(Graphics.FromImage(img)); }
-        void IGraphcis<MyGraphics>.DrawLine(Pen pen, Point a, Point b) { g.DrawLine(pen, a, b); }
-        void IGraphcis<MyGraphics>.DrawLine(Pen pen, int x1, int y1, int x2, int y2) { g.DrawLine(pen, x1, y1, x2, y2); }
-        void IGraphcis<MyGraphics>.DrawRectangle(Pen pen, Point a, int w, int h) { g.DrawRectangle(pen, a.X, a.Y, w, h); }
-        void IGraphcis<MyGraphics>.DrawRectangle(Pen pen, int x, int y, int w, int h) { g.DrawRectangle(pen, x, y, w, h); }
-        void IGraphcis<MyGraphics>.DrawEllipse(Pen pen, Point a, int w, int h) { g.DrawEllipse(pen, a.X, a.Y, w, h); }
-        void IGraphcis<MyGraphics>.DrawEllipse(Pen pen, int x, int y, int w, int h) { g.DrawEllipse(pen, x, y, w, h); }
-        void IGraphcis<MyGraphics>.DrawPolygon(Pen pen, Point[] points) { g.DrawPolygon(pen, points); }
+        MyGraphics IGraphics<MyGraphics>.GetFromImage(Bitmap img) { return new MyGraphics(Graphics.FromImage(img)); }
+        void IGraphics<MyGraphics>.DrawLine(Pen pen, Point a, Point b) { g.DrawLine(pen, a, b); }
+        void IGraphics<MyGraphics>.DrawLine(Pen pen, int x1, int y1, int x2, int y2) { g.DrawLine(pen, x1, y1, x2, y2); }
+        void IGraphics<MyGraphics>.DrawRectangle(Pen pen, Point a, int w, int h) { g.DrawRectangle(pen, a.X, a.Y, w, h); }
+        void IGraphics<MyGraphics>.DrawRectangle(Pen pen, int x, int y, int w, int h) { g.DrawRectangle(pen, x, y, w, h); }
+        void IGraphics<MyGraphics>.DrawEllipse(Pen pen, Point a, int w, int h) { g.DrawEllipse(pen, a.X, a.Y, w, h); }
+        void IGraphics<MyGraphics>.DrawEllipse(Pen pen, int x, int y, int w, int h) { g.DrawEllipse(pen, x, y, w, h); }
+        void IGraphics<MyGraphics>.DrawPolygon(Pen pen, Point[] points) { g.DrawPolygon(pen, points); }
     }
 
     class MouseEventProps : IMouseEventProps
@@ -105,7 +105,7 @@ namespace MyPaint
     {
         MyGraphics graphics;
         public PaintEventProps(PaintEventArgs e) { graphics = new MyGraphics(e.Graphics); }
-        public MyGraphics Graphics { get { return graphics; } }
+        public IGraphics<MyGraphics> Graphics { get { return graphics; } }
     }
     class MyForm : Form1, IForm
     {
@@ -125,7 +125,7 @@ namespace MyPaint
         private void KeyDownEventHandler(object sender, KeyEventArgs e) { keyDown_callback(this, new KeyEventProps(e)); }
         private void KeyUpEventHandler(object sender, KeyEventArgs e) { keyUp_callback(this, new KeyEventProps(e)); }
 
-        public IGraphcis<MyGraphics> GetGraphics() { return new MyGraphics(CreateGraphics()); }
+        public IGraphics<MyGraphics> GetGraphics() { return new MyGraphics(CreateGraphics()); }
         public void AddControl(IControl control) { Controls.Add(control.ToControl()); }
 
         public Action<IForm> LoadCallback { set { load_callback = value; Load += new EventHandler(LoadEventHandler); } }

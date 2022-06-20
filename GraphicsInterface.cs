@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace MyPaint
 {
-
+    
     interface IClickable
     {
         public abstract Action<object> ClickCallback { set; }
@@ -39,7 +39,7 @@ namespace MyPaint
         public abstract Size Size { get; set; }
         public abstract Image Image { get; set; }
     }
-    interface IGraphcis<T> where T : IGraphcis<T>, new()
+    interface IGraphics<T> where T : IGraphics<T>, new()
     {
         private static T _instance = new T();
         protected abstract T GetFromImage(Bitmap img);
@@ -153,11 +153,11 @@ namespace MyPaint
     }
     interface IPaintEventProps
     {
-        public abstract MyGraphics Graphics { get; }
+        public abstract IGraphics<MyGraphics> Graphics { get; }
     }
     interface IForm : IClickable
     {
-        public abstract IGraphcis<MyGraphics> GetGraphics();
+        public abstract IGraphics<MyGraphics> GetGraphics();
         public abstract void AddControl(IControl control);
         public abstract Action<IForm> LoadCallback { set; }
         public abstract Action<IForm, IPaintEventProps> PaintCallback { set; }
