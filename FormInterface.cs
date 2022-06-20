@@ -5,17 +5,47 @@ using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyPaint
-{    
+{
     interface IControl
     {
         public abstract Control ToControl();
     }
     class MyButton : Button, IButton
     {
-        Action<object> click_callback;
-        private void ClickEventHandler(object sender, EventArgs e) { click_callback(sender); }
+        Action<MyButton> click_callback;
+        private void ClickEventHandler(object sender, EventArgs e) { click_callback(this); }
         public Control ToControl() { return this; }
-        public Action<object> ClickCallback { set { click_callback = value;  Click += new EventHandler(ClickEventHandler); } }
+        public Action<IButton> ClickCallback { set { click_callback = value; Click += new EventHandler(ClickEventHandler); } }
+    }
+    class MyLabel : Label, ILabel
+    {
+        public Control ToControl() { return this; }
+    }
+    class MyPictureBox : PictureBox, IPictureBox, IClickable
+    {
+        Action<MyPictureBox> click_callback;
+        Action<MyPictureBox, IMouseEventProps> mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
+        Action<MyPictureBox, KeyEventProps> keyDown_callback, keyUp_callback;
+
+        private void ClickEventHandler(object sender, EventArgs e) { click_callback(this); }
+        private void MouseClickEventHandler(object sender, MouseEventArgs e) { mouseClick_callback(this, new MouseEventProps(e)); }
+        private void MouseDoubleClickEventHandler(object sender, MouseEventArgs e) { mouseDoubleClick_callback(this, new MouseEventProps(e)); }
+        private void MouseMoveEventHandler(object sender, MouseEventArgs e) { mouseMove_callback(this, new MouseEventProps(e)); }
+        private void MouseDownEventHandler(object sender, MouseEventArgs e) { mouseDown_callback(this, new MouseEventProps(e)); }
+        private void MouseUpEventHandler(object sender, MouseEventArgs e) { mouseUp_callback(this, new MouseEventProps(e)); }
+        private void KeyDownEventHandler(object sender, KeyEventArgs e) { keyDown_callback(this, new KeyEventProps(e)); }
+        private void KeyUpEventHandler(object sender, KeyEventArgs e) { keyUp_callback(this, new KeyEventProps(e)); }
+
+        public Control ToControl() { return this; }
+
+        public Action<object> ClickCallback { set { click_callback = value; Click += new EventHandler(ClickEventHandler); } }
+        public Action<object, IMouseEventProps> MouseClickCallback { set { mouseClick_callback = value; MouseClick += new MouseEventHandler(MouseClickEventHandler); } }
+        public Action<object, IMouseEventProps> MouseDoubleClickCallback { set { mouseDoubleClick_callback = value; MouseDoubleClick += new MouseEventHandler(MouseDoubleClickEventHandler); } }
+        public Action<object, IMouseEventProps> MouseMoveCallback { set { mouseMove_callback = value; MouseMove += new MouseEventHandler(MouseMoveEventHandler); } }
+        public Action<object, IMouseEventProps> MouseDownCallback { set { mouseDown_callback = value; MouseDown += new MouseEventHandler(MouseDownEventHandler); } }
+        public Action<object, IMouseEventProps> MouseUpCallback { set { mouseUp_callback = value; MouseUp += new MouseEventHandler(MouseUpEventHandler); } }
+        public Action<object, IKeyEventProps> KeyDownCallback { set { keyDown_callback = value; KeyDown += new KeyEventHandler(KeyDownEventHandler); } }
+        public Action<object, IKeyEventProps> KeyUpCallback { set { keyUp_callback = value; KeyUp += new KeyEventHandler(KeyUpEventHandler); } }
     }
 
     class MyGraphics : IGraphcis<MyGraphics>
@@ -79,26 +109,27 @@ namespace MyPaint
     }
     class MyForm : Form1, IForm
     {
-        Action<object> load_callback, click_callback;
-        Action<object, PaintEventProps> paint_callback;
-        Action<object, MouseEventProps> mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
-        Action<object, KeyEventProps> keyDown_callback, keyUp_callback;
+        Action<MyForm> load_callback, click_callback;
+        Action<MyForm, PaintEventProps> paint_callback;
+        Action<MyForm, MouseEventProps> mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
+        Action<MyForm, KeyEventProps> keyDown_callback, keyUp_callback;
 
-        private void LoadEventHandler(object sender, EventArgs e) { load_callback(sender); }
-        private void PaintEventHandler(object sender, PaintEventArgs e) { paint_callback(sender, new PaintEventProps(e)); }
-        private void ClickEventHandler(object sender, EventArgs e) { click_callback(sender); }
-        private void MouseClickEventHandler(object sender, MouseEventArgs e) { mouseClick_callback(sender, new MouseEventProps(e)); }
-        private void MouseDoubleClickEventHandler(object sender, MouseEventArgs e) { mouseDoubleClick_callback(sender, new MouseEventProps(e)); }
-        private void MouseMoveEventHandler(object sender, MouseEventArgs e) { mouseMove_callback(sender, new MouseEventProps(e)); }
-        private void MouseDownEventHandler(object sender, MouseEventArgs e) { mouseDown_callback(sender, new MouseEventProps(e)); }
-        private void MouseUpEventHandler(object sender, MouseEventArgs e) { mouseUp_callback(sender, new MouseEventProps(e)); }
-        private void KeyDownEventHandler(object sender, KeyEventArgs e) { keyDown_callback(sender, new KeyEventProps(e)); }
-        private void KeyUpEventHandler(object sender, KeyEventArgs e) { keyUp_callback(sender, new KeyEventProps(e)); }
+        private void LoadEventHandler(object sender, EventArgs e) { load_callback(this); }
+        private void PaintEventHandler(object sender, PaintEventArgs e) { paint_callback(this, new PaintEventProps(e)); }
+        private void ClickEventHandler(object sender, EventArgs e) { click_callback(this); }
+        private void MouseClickEventHandler(object sender, MouseEventArgs e) { mouseClick_callback(this, new MouseEventProps(e)); }
+        private void MouseDoubleClickEventHandler(object sender, MouseEventArgs e) { mouseDoubleClick_callback(this, new MouseEventProps(e)); }
+        private void MouseMoveEventHandler(object sender, MouseEventArgs e) { mouseMove_callback(this, new MouseEventProps(e)); }
+        private void MouseDownEventHandler(object sender, MouseEventArgs e) { mouseDown_callback(this, new MouseEventProps(e)); }
+        private void MouseUpEventHandler(object sender, MouseEventArgs e) { mouseUp_callback(this, new MouseEventProps(e)); }
+        private void KeyDownEventHandler(object sender, KeyEventArgs e) { keyDown_callback(this, new KeyEventProps(e)); }
+        private void KeyUpEventHandler(object sender, KeyEventArgs e) { keyUp_callback(this, new KeyEventProps(e)); }
 
+        public IGraphcis<MyGraphics> GetGraphics() { return new MyGraphics(CreateGraphics()); }
         public void AddControl(IControl control) { Controls.Add(control.ToControl()); }
 
-        public Action<object> LoadCallback { set { load_callback = value; Load += new EventHandler(LoadEventHandler); } }
-        public Action<object> PaintCallback { set { paint_callback = value; Paint += new PaintEventHandler(PaintEventHandler); } }
+        public Action<IForm> LoadCallback { set { load_callback = value; Load += new EventHandler(LoadEventHandler); } }
+        public Action<IForm, IPaintEventProps> PaintCallback { set { paint_callback = value; Paint += new PaintEventHandler(PaintEventHandler); } }
         public Action<object> ClickCallback { set { click_callback = value; Click += new EventHandler(ClickEventHandler); } }
         public Action<object, IMouseEventProps> MouseClickCallback { set { mouseClick_callback = value; MouseClick += new MouseEventHandler(MouseClickEventHandler); } }
         public Action<object, IMouseEventProps> MouseDoubleClickCallback { set { mouseDoubleClick_callback = value; MouseDoubleClick += new MouseEventHandler(MouseDoubleClickEventHandler); } }
