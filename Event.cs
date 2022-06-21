@@ -21,10 +21,21 @@ namespace MyPaint
             pen = e.pen;
             mouseDown = false;
         }
+        public Color Color
+        {
+            get { return pen.Color; }
+            set { pen.Color = value; }
+        }
+        public int Width
+        {
+            set 
+            {
+                if (value <= 0) throw new Exception("Width of a pen cannot be less than or equal to zero.");
+                pen.Width = value;
+            }
+        }
         public abstract void Update(IGraphics<MyGraphics> g, Point p);
         public virtual void Reset() { mouseDown = false; }
-        public void ChangeColor(Color c) { pen.Color = c; }
-        public void ChangeWidth(int w) { pen.Width = w; }
     }
 
     abstract class HandDrawing : Event
@@ -73,12 +84,12 @@ namespace MyPaint
         protected override void Show(IGraphics<MyGraphics> g)
         {
             Color c = pen.Color;
-            pen.Color = Color.White;
+            pen.Color = Color.FromArgb(240, 240, 240);
             g.DrawPath(pen, path.ToArray());
             pen.Color = c;
         }
     }
-    
+
     abstract class DrawShape : Event
     {
         public DrawShape() : base() { }

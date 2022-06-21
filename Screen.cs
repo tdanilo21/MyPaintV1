@@ -56,7 +56,7 @@ namespace MyPaint
         }
         private void MouseMove(object sender, IMouseEventProps e)
         {
-            if (mouse_down) screen.Image = Draw(prev, e.Location);
+            if (mouse_down) screen.Image = Draw(new Bitmap(prev), e.Location);
         }
         private void MouseUp(object sender, IMouseEventProps e)
         {

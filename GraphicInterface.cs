@@ -32,12 +32,29 @@ namespace MyPaint
         public abstract Size Size { get; set; }
         public abstract Color BackColor { get; set; }
         public abstract string Text { get; set; }
+        public abstract ContentAlignment TextAlign { get; set; }
     }
     interface IPictureBox : IControl, IClickable
     {
         public abstract Point Location { get; set; }
         public abstract Size Size { get; set; }
         public abstract Image Image { get; set; }
+    }
+    public enum DialogResults
+    {
+        None = 0,
+        OK = 1,
+        Cancel = 2,
+        Abort = 3,
+        Retry = 4,
+        Ignore = 5,
+        Yes = 6,
+        No = 7
+    }
+    interface IColorDialog
+    {
+        public abstract Color Color { get; set; }
+        public abstract DialogResults Show();
     }
     interface IGraphics<T> where T : IGraphics<T>, new()
     {
@@ -49,17 +66,22 @@ namespace MyPaint
         public abstract void DrawLine(Pen pen, int x1, int y1, int x2, int y2);
         public abstract void DrawRectangle(Pen pen, Point a, int w, int h);
         public abstract void DrawRectangle(Pen pen, int x, int y, int w, int h);
+        public abstract void FillRectangle(Brush brush, Point a, int w, int h);
+        public abstract void FillRectangle(Brush brush, int x, int y, int w, int h);
         public abstract void DrawEllipse(Pen pen, Point a, int w, int h);
         public abstract void DrawEllipse(Pen pen, int x, int y, int w, int h);
+        public abstract void FillEllipse(Brush brush, Point a, int w, int h);
+        public abstract void FillEllipse(Brush brush, int x, int y, int w, int h);
         public abstract void DrawPolygon(Pen pen, Point[] points);
+        public abstract void FillPolygon(Brush brush, Point[] points);
         public abstract void DrawPath(Pen pen, Point[] points);
     }
     public enum MouseButton
     {
-        None,
-        Left,
-        Middle,
-        Right
+        None = 0,
+        Left = 1,
+        Middle = 2,
+        Right = 3
     }
     interface IMouseEventProps
     {
@@ -161,6 +183,7 @@ namespace MyPaint
         public abstract Rectangle ClientRectangle { get; }
         public abstract IGraphics<MyGraphics> GetGraphics();
         public abstract void AddControl(IControl control);
+        public abstract void Refresh();
         public abstract Action<IForm> LoadCallback { set; }
         public abstract Action<IForm, IPaintEventProps> PaintCallback { set; }
     }

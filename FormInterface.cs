@@ -21,7 +21,7 @@ namespace MyPaint
     class MyButton : Button, IButton
     {
         int index;
-        List<Action<MyButton> > click_callback;
+        List<Action<MyButton>> click_callback;
         public MyButton() : base()
         {
             click_callback = new List<Action<MyButton>>();
@@ -59,9 +59,9 @@ namespace MyPaint
     class MyPictureBox : PictureBox, IPictureBox, IClickable
     {
         int index;
-        List<Action<MyPictureBox> > click_callback;
-        List<Action<MyPictureBox, IMouseEventProps> > mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
-        List<Action<MyPictureBox, IKeyEventProps> > keyDown_callback, keyUp_callback;
+        List<Action<MyPictureBox>> click_callback;
+        List<Action<MyPictureBox, IMouseEventProps>> mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
+        List<Action<MyPictureBox, IKeyEventProps>> keyDown_callback, keyUp_callback;
 
         public MyPictureBox() : base()
         {
@@ -114,6 +114,11 @@ namespace MyPaint
         { set { keyUp_callback.Add(value); if (keyUp_callback.Count == 1) KeyUp += new KeyEventHandler(KeyUpEventHandler); } }
     }
 
+    class MyColorDialog : ColorDialog, IColorDialog
+    {
+        public DialogResults Show() { return (DialogResults)(int)ShowDialog(); }
+    }
+
     class MyGraphics : IGraphics<MyGraphics>
     {
         Graphics g;
@@ -124,9 +129,14 @@ namespace MyPaint
         void IGraphics<MyGraphics>.DrawLine(Pen pen, int x1, int y1, int x2, int y2) { g.DrawLine(pen, x1, y1, x2, y2); }
         void IGraphics<MyGraphics>.DrawRectangle(Pen pen, Point a, int w, int h) { g.DrawRectangle(pen, a.X, a.Y, w, h); }
         void IGraphics<MyGraphics>.DrawRectangle(Pen pen, int x, int y, int w, int h) { g.DrawRectangle(pen, x, y, w, h); }
+        void IGraphics<MyGraphics>.FillRectangle(Brush brush, Point a, int w, int h) { g.FillRectangle(brush, a.X, a.Y, w, h); }
+        void IGraphics<MyGraphics>.FillRectangle(Brush brush, int x, int y, int w, int h) { g.FillRectangle(brush, x, y, w, h); }
         void IGraphics<MyGraphics>.DrawEllipse(Pen pen, Point a, int w, int h) { g.DrawEllipse(pen, a.X, a.Y, w, h); }
         void IGraphics<MyGraphics>.DrawEllipse(Pen pen, int x, int y, int w, int h) { g.DrawEllipse(pen, x, y, w, h); }
+        void IGraphics<MyGraphics>.FillEllipse(Brush brush, Point a, int w, int h) { g.FillEllipse(brush, a.X, a.Y, w, h); }
+        void IGraphics<MyGraphics>.FillEllipse(Brush brush, int x, int y, int w, int h) { g.FillEllipse(brush, x, y, w, h); }
         void IGraphics<MyGraphics>.DrawPolygon(Pen pen, Point[] points) { g.DrawPolygon(pen, points); }
+        void IGraphics<MyGraphics>.FillPolygon(Brush brush, Point[] points) { g.FillPolygon(brush, points); }
         void IGraphics<MyGraphics>.DrawPath(Pen pen, Point[] points)
         {
             System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
@@ -181,10 +191,10 @@ namespace MyPaint
     }
     class MyForm : Form1, IForm
     {
-        List<Action<MyForm> > load_callback, click_callback;
-        List<Action<MyForm, IPaintEventProps> > paint_callback;
-        List<Action<MyForm, IMouseEventProps> > mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
-        List<Action<MyForm, IKeyEventProps> > keyDown_callback, keyUp_callback;
+        List<Action<MyForm>> load_callback, click_callback;
+        List<Action<MyForm, IPaintEventProps>> paint_callback;
+        List<Action<MyForm, IMouseEventProps>> mouseClick_callback, mouseDoubleClick_callback, mouseMove_callback, mouseDown_callback, mouseUp_callback;
+        List<Action<MyForm, IKeyEventProps>> keyDown_callback, keyUp_callback;
 
         public MyForm() : base()
         {
@@ -200,7 +210,7 @@ namespace MyPaint
             keyUp_callback = new List<Action<MyForm, IKeyEventProps>>();
         }
 
-        private void LoadEventHandler(object sender, EventArgs e) { foreach(var f in load_callback) f(this); }
+        private void LoadEventHandler(object sender, EventArgs e) { foreach (var f in load_callback) f(this); }
         private void PaintEventHandler(object sender, PaintEventArgs e) { foreach (var f in paint_callback) f(this, new PaintEventProps(e)); }
         private void ClickEventHandler(object sender, EventArgs e) { foreach (var f in click_callback) f(this); }
         private void MouseClickEventHandler(object sender, MouseEventArgs e) { foreach (var f in mouseClick_callback) f(this, new MouseEventProps(e)); }

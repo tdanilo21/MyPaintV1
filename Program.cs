@@ -19,7 +19,7 @@ namespace MyPaint
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MyForm form = new MyForm();
-            Toolbox toolbox = new Toolbox(form, new Point(0, 0), 40);
+            Toolbox toolbox = new Toolbox(form, new Point(0, 0));
             Screen screen = new Screen(form, toolbox.GetDraw(), toolbox.GetFinish(), new Point(0, toolbox.Height), form.ClientRectangle.Width, form.ClientRectangle.Height - toolbox.Height);
             Application.Run(form);
         }
