@@ -191,7 +191,7 @@ namespace MyPaint
 
         private void Paint(IForm form, IPaintEventProps e)
         {
-            SolidBrush brush = new SolidBrush(Color.LightBlue);
+            SolidBrush brush = new SolidBrush(Color.FromArgb(105, 250, 240));
             e.Graphics.FillRectangle(brush, p.X, p.Y, form.ClientRectangle.Width, Height);
             brush.Color = Color.White;
             Pen pen = new Pen(Color.Black);
