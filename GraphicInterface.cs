@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Drawing;
 
 namespace MyPaint
@@ -56,6 +57,15 @@ namespace MyPaint
         public abstract Color Color { get; set; }
         public abstract DialogResults Show();
     }
+
+    interface IFileDialog
+    {
+        public abstract string Filter { set; }
+        public abstract string Title { set; }
+        public abstract string FileName { get; }
+        public abstract DialogResults Show();
+        public abstract Stream OpenFile();
+    }
     interface IGraphics<T> where T : IGraphics<T>, new()
     {
         private static T _instance = new T();
@@ -66,15 +76,29 @@ namespace MyPaint
         public abstract void DrawLine(Pen pen, int x1, int y1, int x2, int y2);
         public abstract void DrawRectangle(Pen pen, Point a, int w, int h);
         public abstract void DrawRectangle(Pen pen, int x, int y, int w, int h);
+        public abstract void DrawRectangle(Pen pen, Rectangle rect);
         public abstract void FillRectangle(Brush brush, Point a, int w, int h);
         public abstract void FillRectangle(Brush brush, int x, int y, int w, int h);
+        public abstract void FillRectangle(Brush brush, Rectangle rect);
         public abstract void DrawEllipse(Pen pen, Point a, int w, int h);
         public abstract void DrawEllipse(Pen pen, int x, int y, int w, int h);
+        public abstract void DrawEllipse(Pen pen, Rectangle rect);
         public abstract void FillEllipse(Brush brush, Point a, int w, int h);
         public abstract void FillEllipse(Brush brush, int x, int y, int w, int h);
+        public abstract void FillEllipse(Brush brush, Rectangle rect);
+        public abstract void DrawArc(Pen pen, Point a, int w, int h, int start_angle, int sweep_angle);
+        public abstract void DrawArc(Pen pen, int x, int y, int w, int h, int start_angle, int sweep_angle);
+        public abstract void DrawArc(Pen pen, Rectangle rect, int start_angle, int sweep_angle);
+        public abstract void DrawBezier(Pen pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
         public abstract void DrawPolygon(Pen pen, Point[] points);
         public abstract void FillPolygon(Brush brush, Point[] points);
+        public abstract void DrawCurve(Pen pen, Point[] points);
         public abstract void DrawPath(Pen pen, Point[] points);
+        public abstract void DrawImage(Image img, Point a, int w, int h);
+        public abstract void DrawImage(Image img, int x, int y, int w, int h);
+        public abstract void DrawImage(Image img, Rectangle rect);
+        public abstract void DrawImage(Image img, Point a);
+        public abstract void DrawImage(Image img, int x, int y);
     }
     public enum MouseButton
     {
@@ -178,13 +202,22 @@ namespace MyPaint
     {
         public abstract IGraphics<MyGraphics> Graphics { get; }
     }
+    public enum WindowState
+    {
+        Normal = 0,
+        Minimized = 1,
+        Maximized = 2
+    }
     interface IForm : IClickable
     {
+        public abstract bool KeyPreview { get; set; }
         public abstract Rectangle ClientRectangle { get; }
+        //public abstract WindowState WindowState { get; set; }
         public abstract IGraphics<MyGraphics> GetGraphics();
         public abstract void AddControl(IControl control);
         public abstract void Refresh();
         public abstract Action<IForm> LoadCallback { set; }
         public abstract Action<IForm, IPaintEventProps> PaintCallback { set; }
+        public abstract Action<IForm> ClientSizeChangedCallback { set; }
     }
 }
